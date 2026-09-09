@@ -92,15 +92,51 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     });
 
 });
-// Auto-pause other videos when one starts playing
-const allVideos = document.querySelectorAll('.work-media video');
 
-allVideos.forEach((video) => {
+// تشغيل الفيديو التلقائي عند الوقوف عليه بالماوس
+const workCards = document.querySelectorAll('.work-card');
+
+workCards.forEach((card) => {
+    const video = card.querySelector('video');
+    if (!video) return;
+
+    // تشغيل عند تمرير الماوس
+    card.addEventListener('mouseenter', () => {
+        video.muted = true; // تأكيد كتم الصوت عشان يشتغل بسلاسة
+        video.play().catch(() => {});
+    });
+
+    // إيقاف عند خروج الماوس
+    card.addEventListener('mouseleave', () => {
+        video.pause();
+    });
+
+    // إيقاف باقي الفيديوهات لو اشتغل فيديو بالصوت
     video.addEventListener('play', () => {
-        allVideos.forEach((otherVideo) => {
-            if (otherVideo !== video) {
-                otherVideo.pause();
-            }
+        document.querySelectorAll('.work-card video').forEach((v) => {
+            if (v !== video) v.pause();
         });
+    });
+});
+// تأثير الـ 3D Tilt على كروت الخدمات
+const serviceCards = document.querySelectorAll('.service-card');
+
+serviceCards.forEach((card) => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -7;
+        const rotateY = ((x - centerX) / centerX) * 7;
+
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
     });
 });
