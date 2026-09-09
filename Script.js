@@ -92,3 +92,15 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     });
 
 });
+// Auto-pause other videos when one starts playing
+const allVideos = document.querySelectorAll('.work-media video');
+
+allVideos.forEach((video) => {
+    video.addEventListener('play', () => {
+        allVideos.forEach((otherVideo) => {
+            if (otherVideo !== video) {
+                otherVideo.pause();
+            }
+        });
+    });
+});
